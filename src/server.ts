@@ -2,6 +2,9 @@ import express, { Express, Request, Response } from "express";
 import bodyParser from "body-parser";
 import routes from "./routes";
 import cors from "cors";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
@@ -21,7 +24,7 @@ app.use((req, res, next) => {
 app.use("/api", routes);
 
 app.get("/", (req: Request, res: Response) => {
-    res.send("Running Express + Typescript");
+    res.send("Welcome to SociaLens🐱‍🏍");
 });
 
 app.listen(port, () => {

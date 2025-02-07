@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Review } from "../models/review";
+import { Review, Prediction } from "../models/review";
 import { connection } from "../configs/db";
 import { PoolConnection } from "mysql2/typings/mysql/lib/PoolConnection";
 
@@ -29,5 +29,28 @@ const getAll = (req: Request, res: Response) => {
     })
 }
 
+const createReview = (req: Request, res: Response) => {
+    const { data } = req.body; 
+    connection.getConnection((err: NodeJS.ErrnoException | null, conn: PoolConnection) => {
+        const values = data.map(({nama, restaurant_id,  tanggal, body, prediksi}: Prediction) => 
+            [nama, restaurant_id, body, prediksi, tanggal]);
+        const sql = "INSERT INTO reviews (username, restaurant_id, body, sentiment, time_review) VALUES ?";
+        conn.query(sql, [values], (err, result: any) => {
+            conn.release();
 
-export default { getAll };
+            if (err) {
+                return res.status(500).send({
+                    message: "INTERNAL SERVER ERROR",
+                    result: null,
+                });
+            } 
+            res.status(201).send({
+                message: "OK",
+                result: result
+            });
+        })
+    })
+}
+
+
+export default { getAll, createReview };

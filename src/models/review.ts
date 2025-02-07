@@ -7,3 +7,11 @@ export interface Review {
     time_review: string;
     created_at: string;
 }
+
+export interface Prediction {
+    nama: string;
+    restaurant_id: number;
+    tanggal: string;
+    body: string;
+    prediksi: string;
+}
