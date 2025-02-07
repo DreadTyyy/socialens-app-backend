@@ -19,15 +19,22 @@ const sentimen = [{
 
 const getAll = (req: Request, res: Response) => {
     connection.getConnection((err: NodeJS.ErrnoException | null, conn: PoolConnection) => {
+        if (err) {
+            res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null
+            });
+        }
+        
         conn.query("select * from restaurants", (err, result: Restaurant[]) =>{
             conn.release();
-
             if (err) {
                 return res.status(500).send({
                     message: "INTERNAL SERVER ERROR",
                     result: null,
                 });
             } 
+
             if(result.length > 0) {
                 res.status(200).send({
                     message: "OK",
@@ -46,9 +53,15 @@ const getAll = (req: Request, res: Response) => {
 const getDetailRestaurant = (req: Request, res: Response) => {
     const { userId } = req.params;
     connection.getConnection((err: NodeJS.ErrnoException | null, conn: PoolConnection) => {
+        if (err) {
+            return res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null,
+            });
+        } 
+        
         conn.query("SELECT * FROM restaurants WHERE user_id = ?", userId, (err, result: any) => {
             conn.release();
-
             if (err) {
                 return res.status(500).send({
                     message: "INTERNAL SERVER ERROR",
@@ -76,12 +89,16 @@ const createRestaurant = (req: Request, res: Response) => {
     connection.getConnection((err: NodeJS.ErrnoException | null, conn: PoolConnection) => {
         const sql = "INSERT INTO restaurants (`title`, `user_id`, `url_maps`) VALUES(?)"
         const values = [title, req.params.userId, url_maps];
+        if (err) {
+            return res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null,
+            });
+        } 
+        
         conn.query(sql, [values], (err, result) => {
             conn.release();
-
             if (err) {
-                console.log(err);
-                
                 res.status(500).send({
                     message: err.message,
                     result: null,
@@ -97,9 +114,14 @@ const createRestaurant = (req: Request, res: Response) => {
 
 const deleteRestaurant = (req: Request, res: Response) => {
     connection.getConnection((err: NodeJS.ErrnoException | null, conn: PoolConnection) => {
+        if (err) {
+            return res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null,
+            });
+        } 
         conn.query("DELETE FROM restaurants WHERE user_id = ?;", req.params.userId, (err, result: any) => {
             conn.release();
-
             if (err) {
                 res.status(500).send({
                     message: err.message,
@@ -107,14 +129,14 @@ const deleteRestaurant = (req: Request, res: Response) => {
                 });
             } 
             if (result.affectedRows > 0){
-                res.status(200).send({
+                return res.status(200).send({
                     message: "OK",
                 });
-            } else {
-                res.status(404).send({
-                    message: "Restaurant not found",
-                });
-            }
+            } 
+            return res.status(404).send({
+                message: "Restaurant not found",
+            });
+            
         })
     })
 }
@@ -123,6 +145,12 @@ const updateRestaurant = (req: Request, res: Response) => {
     const { title, url_maps } = req.body;
 
     connection.getConnection((err: NodeJS.ErrnoException | null, conn: PoolConnection) => {
+        if (err) {
+            return res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null,
+            });
+        }
         let sql = "UPDATE restaurants SET `title` = ? WHERE user_id = ?"
         let values = [title, req.params.userId]; 
         if (url_maps) {
@@ -159,6 +187,13 @@ const getDetailSentimen = (req: Request, res: Response) => {
     const endDate: string | null = req.query.endDate ? String(req.query.endDate) : null;
 
     connection.getConnection((err: NodeJS.ErrnoException | null, conn: PoolConnection) => {
+        if (err) {
+            return res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null,
+            });
+        }
+        
         let sqlReviews = `
             SELECT 
                 restaurants.id AS restaurant_id,

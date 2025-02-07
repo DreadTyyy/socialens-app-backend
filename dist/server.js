@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 });
 app.use("/api", routes_1.default);
 app.get("/", (req, res) => {
-    res.send("Welcome to SociaLens🐱‍🏍");
+    res.send("Welcome to SociaLens 🐱‍🏍");
 });
 app.listen(port, () => {
     console.log(`Server is running in port ${port}`);

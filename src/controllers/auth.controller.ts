@@ -11,6 +11,12 @@ const register = (req: Request, res: Response) => {
     const { username, password, confirmationPassword } = req.body;
 
     connection.getConnection((err: NodeJS.ErrnoException | null, conn: PoolConnection) => {
+        if (err) {
+            res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null
+            });
+        }
         conn.release();
         if (password !== confirmationPassword) {
             return res.status(400).send({
@@ -53,6 +59,12 @@ const login = (req: Request, res: Response) => {
     const { password } = req.body
     const foundUser = req.foundUser;
     connection.getConnection((err: NodeJS.ErrnoException | null, conn: PoolConnection) => {
+        if (err) {
+            res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null
+            });
+        }
         conn.release();
 
         if (foundUser) {
@@ -85,10 +97,16 @@ const login = (req: Request, res: Response) => {
 
 const getDataFromToken = (req: Request, res: Response) => {
     connection.getConnection((err, conn: PoolConnection) => {
-        conn.release();
-
+        if (err) {
+            res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null
+            });
+        }
+        
         const sql = "SELECT * FROM users WHERE id = ?"
         conn.query(sql, req.userId, (err, result:any) => {
+            conn.release();
             if (err) {
                 res.status(500).send({
                     message: "INTERNAL SERVER ERROR",

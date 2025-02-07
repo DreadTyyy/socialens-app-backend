@@ -10,6 +10,12 @@ const salt = 10;
 const register = (req, res) => {
     const { username, password, confirmationPassword } = req.body;
     db_1.connection.getConnection((err, conn) => {
+        if (err) {
+            res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null
+            });
+        }
         conn.release();
         if (password !== confirmationPassword) {
             return res.status(400).send({
@@ -48,6 +54,12 @@ const login = (req, res) => {
     const { password } = req.body;
     const foundUser = req.foundUser;
     db_1.connection.getConnection((err, conn) => {
+        if (err) {
+            res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null
+            });
+        }
         conn.release();
         if (foundUser) {
             bcrypt_1.default.compare(password.toString(), foundUser.password, (err, response) => {
@@ -72,9 +84,15 @@ const login = (req, res) => {
 };
 const getDataFromToken = (req, res) => {
     db_1.connection.getConnection((err, conn) => {
-        conn.release();
+        if (err) {
+            res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null
+            });
+        }
         const sql = "SELECT * FROM users WHERE id = ?";
         conn.query(sql, req.userId, (err, result) => {
+            conn.release();
             if (err) {
                 res.status(500).send({
                     message: "INTERNAL SERVER ERROR",

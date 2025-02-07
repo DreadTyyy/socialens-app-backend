@@ -29,7 +29,7 @@ const getAll = (req, res) => {
 const createReview = (req, res) => {
     const { data } = req.body;
     db_1.connection.getConnection((err, conn) => {
-        const values = data.map(({ nama, restaurant_id, tanggal, body, prediksi }) => [nama, restaurant_id, body, prediksi, tanggal]);
+        const values = data.map(({ username, restaurant_id, time_review, body, sentiment }) => [username, restaurant_id, body, sentiment, time_review]);
         const sql = "INSERT INTO reviews (username, restaurant_id, body, sentiment, time_review) VALUES ?";
         conn.query(sql, [values], (err, result) => {
             conn.release();

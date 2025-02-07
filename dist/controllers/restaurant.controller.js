@@ -12,6 +12,12 @@ const sentimen = [{
     }];
 const getAll = (req, res) => {
     db_1.connection.getConnection((err, conn) => {
+        if (err) {
+            res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null
+            });
+        }
         conn.query("select * from restaurants", (err, result) => {
             conn.release();
             if (err) {
@@ -38,6 +44,12 @@ const getAll = (req, res) => {
 const getDetailRestaurant = (req, res) => {
     const { userId } = req.params;
     db_1.connection.getConnection((err, conn) => {
+        if (err) {
+            return res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null,
+            });
+        }
         conn.query("SELECT * FROM restaurants WHERE user_id = ?", userId, (err, result) => {
             conn.release();
             if (err) {
@@ -66,10 +78,15 @@ const createRestaurant = (req, res) => {
     db_1.connection.getConnection((err, conn) => {
         const sql = "INSERT INTO restaurants (`title`, `user_id`, `url_maps`) VALUES(?)";
         const values = [title, req.params.userId, url_maps];
+        if (err) {
+            return res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null,
+            });
+        }
         conn.query(sql, [values], (err, result) => {
             conn.release();
             if (err) {
-                console.log(err);
                 res.status(500).send({
                     message: err.message,
                     result: null,
@@ -85,6 +102,12 @@ const createRestaurant = (req, res) => {
 };
 const deleteRestaurant = (req, res) => {
     db_1.connection.getConnection((err, conn) => {
+        if (err) {
+            return res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null,
+            });
+        }
         conn.query("DELETE FROM restaurants WHERE user_id = ?;", req.params.userId, (err, result) => {
             conn.release();
             if (err) {
@@ -94,21 +117,25 @@ const deleteRestaurant = (req, res) => {
                 });
             }
             if (result.affectedRows > 0) {
-                res.status(200).send({
+                return res.status(200).send({
                     message: "OK",
                 });
             }
-            else {
-                res.status(404).send({
-                    message: "Restaurant not found",
-                });
-            }
+            return res.status(404).send({
+                message: "Restaurant not found",
+            });
         });
     });
 };
 const updateRestaurant = (req, res) => {
     const { title, url_maps } = req.body;
     db_1.connection.getConnection((err, conn) => {
+        if (err) {
+            return res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null,
+            });
+        }
         let sql = "UPDATE restaurants SET `title` = ? WHERE user_id = ?";
         let values = [title, req.params.userId];
         if (url_maps) {
@@ -142,6 +169,12 @@ const getDetailSentimen = (req, res) => {
     const startDate = req.query.startDate ? String(req.query.startDate) : null;
     const endDate = req.query.endDate ? String(req.query.endDate) : null;
     db_1.connection.getConnection((err, conn) => {
+        if (err) {
+            return res.status(500).send({
+                message: "INTERNAL SERVER ERROR",
+                result: null,
+            });
+        }
         let sqlReviews = `
             SELECT 
                 restaurants.id AS restaurant_id,
