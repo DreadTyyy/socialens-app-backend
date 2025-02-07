@@ -32,8 +32,8 @@ const getAll = (req: Request, res: Response) => {
 const createReview = (req: Request, res: Response) => {
     const { data } = req.body; 
     connection.getConnection((err: NodeJS.ErrnoException | null, conn: PoolConnection) => {
-        const values = data.map(({nama, restaurant_id,  tanggal, body, prediksi}: Prediction) => 
-            [nama, restaurant_id, body, prediksi, tanggal]);
+        const values = data.map(({username, restaurant_id,  time_review, body, sentiment}: Prediction) => 
+            [username, restaurant_id, body, sentiment, time_review]);
         const sql = "INSERT INTO reviews (username, restaurant_id, body, sentiment, time_review) VALUES ?";
         conn.query(sql, [values], (err, result: any) => {
             conn.release();

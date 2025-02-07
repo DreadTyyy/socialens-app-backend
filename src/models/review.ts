@@ -9,9 +9,9 @@ export interface Review {
 }
 
 export interface Prediction {
-    nama: string;
+    username: string;
     restaurant_id: number;
-    tanggal: string;
+    time_review: string;
     body: string;
-    prediksi: string;
+    sentiment: string;
 }

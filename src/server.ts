@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 app.use("/api", routes);
 
 app.get("/", (req: Request, res: Response) => {
-    res.send("Welcome to SociaLens🐱‍🏍");
+    res.send("Welcome to SociaLens 🐱‍🏍");
 });
 
 app.listen(port, () => {
