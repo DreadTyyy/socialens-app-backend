@@ -217,6 +217,7 @@ const getDetailSentimen = (req: Request, res: Response) => {
             sqlReviews += ` AND reviews.time_review <= ?`;
             valuesReview.push(endDate)
         }
+        sqlReviews += `ORDER BY reviews.time_review;`
 
         const sqlRestaurant = `
             SELECT 
