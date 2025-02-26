@@ -89,6 +89,9 @@ const login = (req: Request, res: Response) => {
                             accessToken: token
                         })
                     }
+                    return res.status(400).send({
+                        message: "Invalid password",
+                    })
                 }
             );
         }
